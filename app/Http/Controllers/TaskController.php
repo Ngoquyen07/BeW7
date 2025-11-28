@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class TaskController extends Controller
 {
@@ -84,20 +85,79 @@ class TaskController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+//            // 1. Kiểm tra quyền
+
+
+            // 2. Validate dữ liệu
+            $task = Auth::user()->tasks()->where('id', $id)->first();
+            Gate::authorize('update', $task);
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'status' => 'required|in:active,inactive',
+            ]);
+
+            // 3. Cập nhật task
+            $task->update($validated);
+
+            return response()->json([
+                'message' => 'Task updated successfully',
+                'success' => true,
+                'data' => $task
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            // Lỗi validate
+            return response()->json([
+                'message' => 'Validation failed',
+                'success' => false,
+                'errors'  => $e->errors(),
+            ], 422);
+
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+
+            // Lỗi không có quyền (Policy)
+            return response()->json([
+                'message' => 'You are not allowed to update this task',
+                'success' => false,
+            ], 403);
+
+        } catch (\Exception $e) {
+
+            // Lỗi bất ngờ khác
+            return response()->json([
+                'message' => 'Server error',
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy($id)
     {
-        //
+        $task = Auth::user()->tasks()->where('id', $id)->first();
+        Gate::authorize('delete', $task);
+        // 2. Xóa task
+        $task->delete();
+
+        return response()->json([
+            'message' => 'Task deleted successfully',
+            'success' => true,
+        ], 200);
     }
+
 }
