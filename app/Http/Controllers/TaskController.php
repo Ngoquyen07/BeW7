@@ -77,6 +77,9 @@ class TaskController extends Controller
                     'data' => $task
                 ],200);
             }
+            return response()->json([
+                'message' => 'Task not found',
+            ],404);
         }
         catch (\Exception $e) {
             return response()->json([
