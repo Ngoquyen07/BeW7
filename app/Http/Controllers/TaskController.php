@@ -22,7 +22,7 @@ class TaskController extends Controller
                 $query->where("title", "like", "%{$request->search}%");
             }
 
-            return $query->orderBy('id', 'asc')->paginate(10);
+            return $query->orderBy('id', 'asc')->paginate(5);
 
         } catch (\Exception $e) {
             return response()->json([
