@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware(['auth:sanctum'])->post('/user', [\App\Http\Controllers\UserController::class, 'update']);
 Route::middleware('auth:sanctum')
     ->prefix('tasks')
     ->controller(TaskController::class)

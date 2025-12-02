@@ -96,9 +96,6 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
         try {
-//            // 1. Kiểm tra quyền
-
-
             // 2. Validate dữ liệu
             $task = Auth::user()->tasks()->where('id', $id)->first();
             Gate::authorize('update', $task);

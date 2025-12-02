@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'imgurl',
     ];
 
     /**
@@ -48,5 +49,14 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->hasMany(Task::class);
+    }
+    public function getImgurlAttribute($value)
+    {
+        if (!$value) {
+            return null; // hoặc return asset("storage/default.png");
+        }
+
+        // $value = avatars/xyz.jpg
+        return asset("storage/" . $value);
     }
 }
