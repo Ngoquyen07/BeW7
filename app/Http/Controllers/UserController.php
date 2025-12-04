@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Nette\Schema\ValidationException;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -60,7 +60,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => "Lỗi" . $exception->getMessage(),
                 'data'    => $user
-            ]);
+            ],500);
         }
 
     }
