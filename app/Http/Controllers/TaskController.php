@@ -16,7 +16,7 @@ class TaskController extends Controller
     {
         try {
             $user = Auth::user();
-            $query = $user->tasks()->orderBy('created_at', 'desc');
+            $query = $user->tasks()->orderBy('updated_at', 'desc');
 
             if ($request->search) {
                 $query->where("title", "like", "%{$request->search}%");

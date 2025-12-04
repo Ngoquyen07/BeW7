@@ -37,10 +37,8 @@ class RegisteredUserController extends Controller
 
             // Gửi event đăng ký
             event(new Registered($user));
-
-            // Đăng nhập tự động
             Auth::login($user);
-
+            //$user->sendEmailVerificationNotification();
             // === 201 CREATED (Chuẩn REST) ===
             return response()->json([
                 'message' => 'Register successfully',
