@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Nette\Schema\ValidationException;
 
 class UserController extends Controller
 {
@@ -14,10 +15,10 @@ class UserController extends Controller
             $user = $request->user();
 
             $request->validate([
-                'name'   => 'nullable|string|max:255',
+                'name'   => 'required|string|max:255',
                 'avatar' => 'nullable|image|max:2048', // Max 2MB
             ]);
-            Log::info('REQUEST DATA', $request->all());
+           // Log::info('REQUEST DATA', $request->all());
 
 
         // 1. Xử lý Avatar
@@ -48,6 +49,12 @@ class UserController extends Controller
                 'message' => 'User updated successfully',
                 'data'    => $user
             ]);
+        }
+        catch (ValidationException $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors()
+            ],422);
         }
         catch (\Exception $exception){
             return response()->json([

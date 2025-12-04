@@ -16,13 +16,13 @@ class TaskController extends Controller
     {
         try {
             $user = Auth::user();
-            $query = $user->tasks();
+            $query = $user->tasks()->orderBy('created_at', 'desc');
 
             if ($request->search) {
                 $query->where("title", "like", "%{$request->search}%");
             }
 
-            return $query->orderBy('id', 'asc')->paginate(5);
+            return $query->paginate(5);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -52,12 +52,19 @@ class TaskController extends Controller
                 'data' => $task
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'message' => 'Failed to create task',
                 'success' => false,
-                'error' => $e->getMessage(),
-            ], 500);
+                'error' => $e->errors()
+            ], 422);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create task',
+                'success' => false,
+                'error' => $e->getMessage()
+            ],500);
         }
     }
 
@@ -101,8 +108,8 @@ class TaskController extends Controller
             Gate::authorize('update', $task);
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'status' => 'required|in:active,inactive',
+                'description' => 'required|string',
+                'status' => 'required',
             ]);
 
             // 3. Cập nhật task

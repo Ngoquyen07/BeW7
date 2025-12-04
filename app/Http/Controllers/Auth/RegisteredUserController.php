@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
 
             // === 201 CREATED (Chuẩn REST) ===
             return response()->json([
-                'message' => 'Ông cháu đăng ký xong rồi đấy',
+                'message' => 'Register successfully',
                 'user' => $user,
             ], 201);
 
